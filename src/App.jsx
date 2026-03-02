@@ -32,61 +32,61 @@ const tabs = [
     name: 'Deep Dive', 
     href: '/', 
     icon: ChartBarIcon,
-    description: 'System functions & 40-brand scalability analysis'
+    description: 'Rating: 8.0/10 - All 4 phases complete, production-ready for 40 brands'
   },
   { 
     name: 'Shopify Integration', 
     href: '/shopify', 
     icon: BookOpenIcon,
-    description: 'Online transactions & multi-courier handling'
+    description: 'E-commerce integration with real-time sync & order management'
   },
   { 
     name: 'Decision Intelligence', 
     href: '/decision-intelligence', 
     icon: SparklesIcon,
-    description: 'Predictive & prescriptive analytics system'
+    description: 'ML roadmap: demand forecasting, inventory optimization, pricing insights'
   },
   { 
     name: 'Missing Automations', 
     href: '/missing-automations', 
     icon: CogIcon,
-    description: 'Critical automation gaps & opportunities'
+    description: 'Automated workflows: alerts, reports, webhooks, and task automation'
   },
   { 
     name: 'Codebase Review', 
     href: '/codebase-review', 
     icon: ExclamationTriangleIcon,
-    description: 'Technical review with ratings & improvements'
+    description: 'Architecture analysis: multi-tenancy, performance, and code quality'
   },
   { 
     name: 'Brand Differentiation', 
     href: '/brand-differentiation', 
     icon: UserGroupIcon,
-    description: 'Avoiding clone behavior across 40 brands'
+    description: 'Customization strategies: branding, features, and unique value props'
   },
   { 
     name: 'Performance', 
     href: '/performance', 
     icon: RocketLaunchIcon,
-    description: 'Critical performance optimizations needed'
+    description: 'Optimization results: 40-brand load testing, caching, and speed gains'
   },
   { 
     name: 'Security & Compliance', 
     href: '/security', 
     icon: ShieldCheckIcon,
-    description: 'Essential security measures & compliance'
+    description: 'RBAC, data encryption, audit logs, and compliance frameworks'
   },
   { 
     name: 'Cost & ROI', 
     href: '/cost-roi', 
     icon: CurrencyDollarIcon,
-    description: 'Financial analysis & return on investment'
+    description: 'TCO analysis: infrastructure costs, revenue projections, and ROI metrics'
   },
   { 
     name: 'Business Dependency', 
     href: '/business-dependency', 
     icon: LinkIcon,
-    description: 'Creating indispensable value & long-term partnerships'
+    description: 'Strategic playbook: becoming indispensable and ensuring long-term value'
   }
 ]
 
