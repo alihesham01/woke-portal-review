@@ -121,35 +121,24 @@ export default function DeepDiveContent() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">🔴 Critical Bugs That Will Break at 40 Brands (12 Issues)</h2>
           
           <div className="space-y-4">
-            <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-5">
-              <h3 className="text-lg font-semibold text-red-800 mb-2">1. Stock Movements Accumulate Incorrectly (DATA CORRUPTION)</h3>
-              <p className="text-red-700 mb-2">
-                <strong>Where:</strong> Daily scraper in scheduler.ts
+            <div className="bg-green-50 border-l-4 border-green-500 rounded-lg p-5">
+              <h3 className="text-lg font-semibold text-green-800 mb-2">1. Stock Movements — CORRECTED (Not a Bug)</h3>
+              <p className="text-green-700 mb-2">
+                <strong>Correction:</strong> Stock movements are inserted manually by the brand to track what was physically sent to stores on a given day. 
+                The scraper does NOT write to the stock_movements table. It only scrapes inventory numbers to update product records.
+                This is working as intended.
               </p>
-              <p className="text-red-700">
-                Every day, the scraper fetches the current inventory from the store portal and inserts the FULL inventory count 
-                as new "stock in" movements. So if a store has 100 units of Product X, after 30 days the system thinks there 
-                have been 3,000 units received (100 x 30 days). The inventory_view then calculates stock as: 
-                total stock in minus total sold. This means inventory numbers grow wildly wrong over time. 
-                The fix is to either insert only the DIFFERENCE from the previous snapshot, or replace the approach entirely 
-                with a "current snapshot" table that overwrites instead of accumulating.
-              </p>
-              <span className="bg-red-200 text-red-800 px-3 py-1 rounded-full text-sm">Severity: CRITICAL - Data Corruption</span>
+              <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">Status: NOT A BUG — Working as designed</span>
             </div>
 
-            <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-5">
-              <h3 className="text-lg font-semibold text-red-800 mb-2">2. Scraper Schema Mismatch (SILENT FAILURES)</h3>
-              <p className="text-red-700 mb-2">
-                <strong>Where:</strong> scrapers.routes.ts vs transactions.controller.ts
+            <div className="bg-green-50 border-l-4 border-green-500 rounded-lg p-5">
+              <h3 className="text-lg font-semibold text-green-800 mb-2">2. Scraper Schema — CORRECTED & FIXED</h3>
+              <p className="text-green-700 mb-2">
+                <strong>Correction:</strong> The selling_price already represents quantity times display price. The column naming 
+                mismatch between the scraper and the schema has been fixed — the worker now inserts using the correct column names 
+                (status instead of transaction_type, sku/item_name/quantity_sold/selling_price matching the schema).
               </p>
-              <p className="text-red-700">
-                The scrapers insert transactions using columns called "transaction_type", "total_amount", and "external_id". 
-                But the main transactions table defined in setup-db.ts uses "status" (not transaction_type), has total_amount 
-                as a GENERATED column (calculated automatically from quantity_sold times selling_price), and has "request_id" 
-                (not external_id). The scraper also references a "transaction_items" table that doesn't exist in the schema. 
-                This means scraped data is either going into wrong columns or failing silently.
-              </p>
-              <span className="bg-red-200 text-red-800 px-3 py-1 rounded-full text-sm">Severity: CRITICAL - Data Loss</span>
+              <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">Status: FIXED in worker.ts</span>
             </div>
 
             <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-5">
@@ -177,7 +166,7 @@ export default function DeepDiveContent() {
                 for all 40 brands. If you restart the server, you lose all cached data. If you need to scale horizontally 
                 (multiple servers), the cron job will run on EVERY server, scraping everything multiple times.
               </p>
-              <span className="bg-red-200 text-red-800 px-3 py-1 rounded-full text-sm">Severity: HIGH - Availability Risk</span>
+              <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">FIXED: Scrapers moved to separate worker process (src/worker.ts) with BullMQ</span>
             </div>
 
             <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-5">
@@ -192,7 +181,7 @@ export default function DeepDiveContent() {
                 The scheduler runs at 1 AM, so scraping might not finish before business hours. There's no parallelism, 
                 no queue, and no way to resume if interrupted.
               </p>
-              <span className="bg-red-200 text-red-800 px-3 py-1 rounded-full text-sm">Severity: HIGH - Performance</span>
+              <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">FIXED: BullMQ parallel queue with configurable concurrency (default 5)</span>
             </div>
 
             <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-5">
@@ -206,7 +195,7 @@ export default function DeepDiveContent() {
                 the cache useless. Worse, if you run multiple server instances, each has its own cache — clearing cache 
                 on one server doesn't clear the others, leading to stale data.
               </p>
-              <span className="bg-red-200 text-red-800 px-3 py-1 rounded-full text-sm">Severity: HIGH - Performance</span>
+              <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">FIXED: Replaced with Redis-backed cache (ioredis), no size limit, shared across instances</span>
             </div>
 
             <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-5">
@@ -220,7 +209,7 @@ export default function DeepDiveContent() {
                 could make 500 requests to instance A, then 500 to instance B, effectively doubling the limit.
                 Also, the rate limit is per-IP, not per-brand — one aggressive brand could consume all the quota.
               </p>
-              <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-sm">Severity: MEDIUM - Security</span>
+              <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">FIXED: Redis-backed rate limiting with per-brand support via INCR+EXPIRE</span>
             </div>
 
             <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-5">
@@ -233,7 +222,7 @@ export default function DeepDiveContent() {
                 no exponential backoff, no dead letter queue. For that brand, yesterday's data is simply missing forever. 
                 Multiply by 40 brands and daily failures will be common. There's also no alert to tell anyone it happened.
               </p>
-              <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-sm">Severity: MEDIUM - Reliability</span>
+              <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">FIXED: BullMQ retry with exponential backoff (3 attempts: 1min, 2min, 4min)</span>
             </div>
 
             <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-5">
@@ -247,7 +236,7 @@ export default function DeepDiveContent() {
                 This means the materialized view gets more and more stale over time, and any dashboard using it 
                 shows increasingly outdated numbers.
               </p>
-              <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-sm">Severity: MEDIUM - Data Accuracy</span>
+              <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">FIXED: Worker refreshes both materialized views hourly via cron</span>
             </div>
 
             <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-5">
@@ -261,7 +250,7 @@ export default function DeepDiveContent() {
                 products each, this view will take minutes to query, not milliseconds. It needs to be converted 
                 to a materialized view that refreshes periodically, or replaced with a running-total approach.
               </p>
-              <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-sm">Severity: MEDIUM - Performance</span>
+              <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">FIXED: Converted to materialized view (inventory_summary) with pre-aggregated JOINs</span>
             </div>
 
             <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-5">
@@ -275,7 +264,7 @@ export default function DeepDiveContent() {
                 With 40 brands making concurrent requests plus the scraper running, you'll hit the 20-connection limit quickly. 
                 Requests will queue up and eventually timeout at 5 seconds.
               </p>
-              <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-sm">Severity: MEDIUM - Availability</span>
+              <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">FIXED: Pool increased to 50, connection timeout to 10s, statement_timeout added</span>
             </div>
 
             <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-5">
@@ -289,7 +278,7 @@ export default function DeepDiveContent() {
                 any route that forgets to call getBrandId() will execute without tenant isolation. 
                 This is a defense-in-depth failure — the middleware should reject non-public routes that lack auth.
               </p>
-              <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-sm">Severity: MEDIUM - Security</span>
+              <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">FIXED: Middleware now returns 401 for unauthenticated non-public routes</span>
             </div>
           </div>
         </section>
