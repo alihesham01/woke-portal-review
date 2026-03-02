@@ -87,46 +87,13 @@ export default function ShopifyIntegrationContent() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">Database Schema Extensions</h2>
           
           <div className="bg-gray-900 text-gray-100 rounded-lg p-6 overflow-x-auto">
-            <pre className="text-sm">
-{`-- Shopify stores per brand
-CREATE TABLE shopify_stores (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    brand_id UUID NOT NULL REFERENCES brands(id),
-    shop_domain VARCHAR(255) NOT NULL,
-    access_token TEXT NOT NULL,
-    webhook_secret TEXT,
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Online orders from Shopify
-CREATE TABLE shopify_orders (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    brand_id UUID NOT NULL,
-    shopify_order_id BIGINT NOT NULL,
-    shop_domain VARCHAR(255) NOT NULL,
-    customer_email VARCHAR(255),
-    financial_status VARCHAR(50),
-    fulfillment_status VARCHAR(50),
-    total_price DECIMAL(10,2),
-    currency VARCHAR(3),
-    created_at_shopify TIMESTAMPTZ,
-    received_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Courier tracking information
-CREATE TABLE courier_shipments (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    order_id UUID REFERENCES shopify_orders(id),
-    courier_name VARCHAR(100),
-    tracking_number VARCHAR(255),
-    status VARCHAR(50),
-    estimated_delivery DATE,
-    delivered_at TIMESTAMPTZ,
-    tracking_url TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);`}
-            </pre>
+            <h3 className="text-lg font-semibold mb-4">Database Schema Extensions</h3>
+            <p className="text-sm text-gray-300">
+              You'll need to add new tables to track Shopify data: store connections, online orders, and shipment tracking. 
+              The shopify_stores table links each brand to their Shopify store with API credentials. 
+              The shopify_orders table captures all online orders with customer and payment details. 
+              The courier_shipments table tracks delivery status across multiple shipping companies.
+            </p>
           </div>
         </section>
 
@@ -344,68 +311,25 @@ Return Initiated → Return label`}
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">API Implementation Examples</h2>
           
           <div className="space-y-4">
-            <div className="bg-gray-900 text-gray-100 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-3">Shopify Webhook Handler</h3>
-              <pre className="text-sm overflow-x-auto">
-{`// POST /api/shopify/webhooks/order
-app.post('/webhooks/order', async (c) => {
-  const signature = c.req.header('X-Shopify-Hmac-Sha256');
-  const body = await c.req.text();
-  
-  // Verify webhook
-  if (!verifyWebhook(body, signature, webhookSecret)) {
-    return c.json({ error: 'Invalid signature' }, 401);
-  }
-  
-  const order = JSON.parse(body);
-  
-  // Transform and save
-  await saveShopifyOrder({
-    brandId: await getBrandFromShop(order.shop_domain),
-    shopifyOrderId: order.id,
-    customerEmail: order.email,
-    totalPrice: order.total_price,
-    lineItems: order.line_items.map(item => ({
-      sku: item.sku,
-      quantity: item.quantity,
-      price: item.price
-    }))
-  });
-  
-  return c.json({ success: true });
-});`}
-              </pre>
-            </div>
+            <div className="bg-gray-50 rounded p-6 mb-6">
+            <h3 className="text-lg font-semibold mb-4">Shopify Webhook Handler</h3>
+            <p className="text-sm text-gray-700">
+              Create a secure webhook endpoint that receives real-time notifications from Shopify. 
+              When a customer places an order, Shopify instantly sends the order details to your system. 
+              Your system verifies it's really from Shopify using a secret key, then saves the order to your database. 
+              This happens automatically 24/7, ensuring your inventory is always up to date.
+            </p>
+          </div>
 
-            <div className="bg-gray-900 text-gray-100 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-3">Courier Tracking Integration</h3>
-              <pre className="text-sm overflow-x-auto">
-{`// Courier adapter pattern
-class CourierAdapter {
-  async trackShipment(courier, trackingNumber) {
-    switch(courier.toLowerCase()) {
-      case 'aramex':
-        return this.trackAramex(trackingNumber);
-      case 'fedex':
-        return this.trackFedEx(trackingNumber);
-      case 'dhl':
-        return this.trackDHL(trackingNumber);
-      default:
-        throw new Error(\`Unsupported courier: \${courier}\`);
-    }
-  }
-  
-  normalizeTracking(rawData) {
-    return {
-      status: rawData.status,
-      location: rawData.currentLocation,
-      timestamp: rawData.lastUpdate,
-      estimatedDelivery: rawData.eta
-    };
-  }
-}`}
-              </pre>
-            </div>
+            <div className="bg-gray-900 text-gray-100 rounded-lg p-6 overflow-x-auto">
+            <h3 className="text-lg font-semibold mb-3">Courier Integration System</h3>
+            <p className="text-sm text-gray-300">
+              Build a flexible system that works with multiple delivery companies. 
+              Each courier (Aramex, FedEx, DHL) has different APIs and tracking formats. 
+              Your system needs an adapter that translates each courier's data into a standard format. 
+              This allows you to track all deliveries in one place, regardless of which courier is used.
+            </p>
+          </div>
           </div>
         </section>
 

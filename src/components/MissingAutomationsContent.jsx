@@ -34,36 +34,14 @@ export default function MissingAutomationsContent() {
               <h3 className="text-lg font-semibold text-red-800 mb-3">❌ Missing: Automated Backups</h3>
               <p className="text-gray-600 mb-4">Currently running manual PowerShell script. No automated backups, no verification.</p>
               
-              <div className="bg-gray-50 rounded p-4 mb-4">
-                <h4 className="font-semibold mb-2">Solution: Automated Backup Pipeline</h4>
-                <pre className="text-sm text-gray-700 overflow-x-auto">
-{`# Cron job: Daily at 2 AM
-0 2 * * * /usr/local/bin/backup-database.sh
-
-#!/bin/bash
-# backup-database.sh
-DATE=$(date +%Y%m%d_%H%M%S)
-BACKUP_DIR="/backups/postgres"
-DB_NAME="woke_portal"
-
-# Create backup
-pg_dump $DB_NAME > $BACKUP_DIR/backup_$DATE.sql
-
-# Compress
-gzip $BACKUP_DIR/backup_$DATE.sql
-
-# Upload to S3
-aws s3 cp $BACKUP_DIR/backup_$DATE.sql.gz s3://woke-backups/
-
-# Verify
-if [ $? -eq 0 ]; then
-  echo "Backup successful: $DATE"
-  # Clean local files older than 7 days
-  find $BACKUP_DIR -name "*.gz" -mtime +7 -delete
-else
-  echo "Backup failed: $DATE" | mail -s "Backup Alert" admin@woke.com
-fi`}
-                </pre>
+              <div className="bg-gray-100 rounded p-3">
+                <h4 className="font-semibold mb-2">Solution: Automated Backup Script</h4>
+                <p className="text-sm text-gray-700">
+                  Create a scheduled backup script that runs every day at 2 AM. 
+                  The script will automatically backup your database, compress it to save space, 
+                  upload it to cloud storage (like Amazon S3), and send you an email if anything fails. 
+                  This ensures you never lose data and can recover from any disaster.
+                </p>
               </div>
               
               <div className="flex flex-wrap gap-2">
@@ -77,27 +55,13 @@ fi`}
               <h3 className="text-lg font-semibold text-yellow-800 mb-3">⚠️ Missing: Data Retention Policy</h3>
               <p className="text-gray-600 mb-4">No automated cleanup of old data. Database will grow indefinitely.</p>
               
-              <div className="bg-gray-50 rounded p-4 mb-4">
-                <h4 className="font-semibold mb-2">Solution: Automated Data Archiving</h4>
-                <pre className="text-sm text-gray-700 overflow-x-auto">
-{`-- Archive transactions older than 2 years
-CREATE TABLE transactions_archive (LIKE transactions);
-
--- Monthly job to move old data
-INSERT INTO transactions_archive 
-SELECT * FROM transactions 
-WHERE transaction_date < NOW() - INTERVAL '2 years';
-
-DELETE FROM transactions 
-WHERE transaction_date < NOW() - INTERVAL '2 years';
-
--- Optimize table
-VACUUM FULL transactions;
-
--- Archive audit logs older than 1 year
-DELETE FROM audit_logs 
-WHERE created_at < NOW() - INTERVAL '1 year';`}
-                </pre>
+              <div className="bg-gray-100 rounded p-3">
+                <h4 className="font-semibold mb-2">Solution: Data Archiving System</h4>
+                <p className="text-sm text-gray-700">
+                  Set up automatic archiving that moves old data to separate storage tables. 
+                  Transactions older than 2 years are moved to an archive table, and audit logs older than 1 year are deleted. 
+                  This keeps your main database fast and responsive while preserving historical data for reporting.
+                </p>
               </div>
               
               <div className="flex flex-wrap gap-2">
@@ -111,43 +75,14 @@ WHERE created_at < NOW() - INTERVAL '1 year';`}
               <h3 className="text-lg font-semibold text-yellow-800 mb-3">⚠️ Missing: Data Quality Checks</h3>
               <p className="text-gray-600 mb-4">No validation of data integrity. Bad data silently corrupts analytics.</p>
               
-              <div className="bg-gray-50 rounded p-4 mb-4">
-                <h4 className="font-semibold mb-2">Solution: Automated Data Validation</h4>
-                <pre className="text-sm text-gray-700 overflow-x-auto">
-{`-- Daily data quality checks
-SELECT 
-  'Negative inventory' as issue,
-  COUNT(*) as count
-FROM products 
-WHERE current_stock < 0;
-
-SELECT 
-  'Orphaned transaction items' as issue,
-  COUNT(*) as count
-FROM transaction_items ti
-LEFT JOIN transactions t ON ti.transaction_id = t.id
-WHERE t.id IS NULL;
-
--- Automated alert if issues found
-DO $$
-DECLARE
-  issue_count INTEGER;
-BEGIN
-  SELECT COUNT(*) INTO issue_count
-  FROM (
-    SELECT COUNT(*) FROM products WHERE current_stock < 0
-    UNION ALL
-    SELECT COUNT(*) FROM transaction_items ti
-    LEFT JOIN transactions t ON ti.transaction_id = t.id
-    WHERE t.id IS NULL
-  ) issues;
-  
-  IF issue_count > 0 THEN
-    PERFORM pg_notify('data_quality_alert', 
-      'Found ' || issue_count || ' data quality issues');
-  END IF;
-END $$;`}
-                </pre>
+              <div className="bg-gray-100 rounded p-3">
+                <h4 className="font-semibold mb-2">Solution: Data Quality Checks</h4>
+                <p className="text-sm text-gray-700">
+                  Create automated checks that scan your data daily for problems. 
+                  The system will alert you if it finds negative inventory numbers, 
+                  transactions that don't have matching products, or other data inconsistencies. 
+                  This prevents bad data from corrupting your reports and analytics.
+                </p>
               </div>
               
               <div className="flex flex-wrap gap-2">

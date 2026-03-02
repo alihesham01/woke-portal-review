@@ -47,25 +47,25 @@ export default function CodebaseReviewContent() {
               <p className="text-red-700 mb-3">Zero test coverage. Every deployment is a risk.</p>
               <div className="bg-red-100 rounded p-3">
                 <h4 className="font-semibold text-red-900 mb-2">Solution:</h4>
-                <pre className="text-sm text-red-800 overflow-x-auto">
-{`# Install testing framework
-npm install --save-dev jest @testing-library/react @testing-library/jest-dom
-
-# jest.config.js
-module.exports = {
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
-  moduleNameMapping: {
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
-  }
-};`}
-                </pre>
+                <p className="text-sm text-red-800">
+                  Install automated testing tools like Jest that will automatically check your code for errors. 
+                  Create tests that verify each piece of your application works correctly. 
+                  This prevents broken code from reaching your customers.
+                </p>
               </div>
             </div>
 
             <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-red-800 mb-2">2. Missing Error Boundaries</h3>
               <p className="text-red-700 mb-3">React app crashes on any error, showing blank screen.</p>
+              <div className="bg-red-100 rounded p-3">
+                <h4 className="font-semibold text-red-900 mb-2">Solution:</h4>
+                <p className="text-sm text-red-800">
+                  Add special error-catching components in React that prevent the entire app from crashing. 
+                  When something goes wrong, these components show a friendly error message instead of a blank screen. 
+                  They also help developers know exactly where the problem occurred.
+                </p>
+              </div>
             </div>
 
             <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-6">
@@ -73,18 +73,11 @@ module.exports = {
               <p className="text-red-700 mb-3">API endpoints vulnerable to DoS attacks.</p>
               <div className="bg-red-100 rounded p-3">
                 <h4 className="font-semibold text-red-900 mb-2">Solution:</h4>
-                <pre className="text-sm text-red-800 overflow-x-auto">
-{`import { rateLimit } from 'express-rate-limit';
-
-// Apply to all routes
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: 'Too many requests'
-});
-
-app.use(limiter);`}
-                </pre>
+                <p className="text-sm text-red-800">
+                  Install rate limiting software that protects your API from too many requests. 
+                  This prevents hackers from overwhelming your system with requests (DDoS attacks). 
+                  Limit regular users to 100 requests every 15 minutes, and login attempts to 5 per 15 minutes.
+                </p>
               </div>
             </div>
           </div>

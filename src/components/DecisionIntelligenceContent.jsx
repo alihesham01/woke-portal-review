@@ -104,53 +104,12 @@ export default function DecisionIntelligenceContent() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">Database Schema Extensions</h2>
           
           <div className="bg-gray-900 text-gray-100 rounded-lg p-6 overflow-x-auto">
-            <pre className="text-sm">
-{`-- ML Features and Predictions
-CREATE TABLE ml_features (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    brand_id UUID NOT NULL,
-    feature_name VARCHAR(100),
-    feature_value NUMERIC,
-    feature_date DATE,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE TABLE predictions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    brand_id UUID NOT NULL,
-    model_name VARCHAR(100),
-    prediction_type VARCHAR(50),
-    predicted_value NUMERIC,
-    confidence_score NUMERIC(3,2),
-    prediction_date DATE,
-    actual_value NUMERIC,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Decision Recommendations
-CREATE TABLE recommendations (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    brand_id UUID NOT NULL,
-    recommendation_type VARCHAR(50),
-    title TEXT NOT NULL,
-    description TEXT,
-    impact_estimate NUMERIC,
-    effort_estimate NUMERIC,
-    priority INTEGER,
-    status VARCHAR(20) DEFAULT 'pending',
-    expires_at TIMESTAMPTZ,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Model Performance Tracking
-CREATE TABLE model_metrics (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    model_name VARCHAR(100),
-    metric_name VARCHAR(50),
-    metric_value NUMERIC,
-    calculated_at TIMESTAMPTZ DEFAULT NOW()
-);`}
-            </pre>
+            <h3 className="text-lg font-semibold mb-4">Database Schema Extensions</h3>
+            <p className="text-sm text-gray-300">
+              You need new tables to support AI features: ml_features stores calculated metrics for predictions, 
+              predictions table saves all AI forecasts with confidence scores, recommendations tracks suggested actions, 
+              and model_metrics monitors AI performance over time. This enables learning and improvement.
+            </p>
           </div>
         </section>
 
@@ -332,34 +291,14 @@ CREATE TABLE model_metrics (
           </div>
 
           <h3 className="text-xl font-semibold text-gray-800 mt-6 mb-3">Example Decision Flow</h3>
-          <div className="bg-gray-900 text-gray-100 rounded-lg p-6">
-            <pre className="text-sm">
-{`// Inventory Replenishment Decision
-function shouldReorder(product, location) {
-  const forecast = getDemandForecast(product, location, 30);
-  const currentStock = getCurrentStock(product, location);
-  const leadTime = getSupplierLeadTime(product);
-  const safetyStock = calculateSafetyStock(forecast variability);
-  
-  const projectedStock = currentStock - forecast[leadTime];
-  
-  if (projectedStock < safetyStock) {
-    const orderQty = safetyStock + forecast[30] - currentStock;
-    const orderCost = orderQty * product.unitCost;
-    const stockoutRisk = calculateStockoutRisk(projectedStock);
-    
-    return {
-      action: 'REORDER',
-      quantity: orderQty,
-      urgency: stockoutRisk > 0.2 ? 'HIGH' : 'NORMAL',
-      expectedImpact: preventLostSales(stockoutRisk),
-      confidence: forecast.confidence
-    };
-  }
-  
-  return { action: 'WAIT', nextCheck: leadTime - 2 };
-}`}
-            </pre>
+          <div className="bg-gray-900 text-gray-100 rounded-lg p-6 overflow-x-auto">
+            <h3 className="text-lg font-semibold mb-3">Decision Engine Logic</h3>
+            <p className="text-sm text-gray-300">
+              The decision engine works in layers: First, it gathers all relevant data about the current situation. 
+              Then it applies business rules and constraints (like budget limits). Next, it runs optimization algorithms 
+              to find the best solution. Finally, it creates specific recommendations with expected outcomes. 
+              The system learns from results to improve future decisions.
+            </p>
           </div>
         </section>
 

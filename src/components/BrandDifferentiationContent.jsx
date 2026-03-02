@@ -241,52 +241,13 @@ export default function BrandDifferentiationContent() {
 
           <h3 className="text-xl font-semibold text-gray-800 mt-6 mb-3">Database Schema</h3>
           <div className="bg-gray-900 text-gray-100 rounded-lg p-6 overflow-x-auto">
-            <pre className="text-sm">
-{`-- Brand personalities
-CREATE TABLE brand_personalities (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    brand_id UUID NOT NULL REFERENCES brands(id),
-    market_position VARCHAR(20), -- premium, mid-tier, budget, niche
-    risk_appetite NUMERIC(2,1) DEFAULT 1.0,
-    customer_focus VARCHAR(20),
-    growth_strategy VARCHAR(20),
-    
-    -- Decision modifiers (JSON for flexibility)
-    inventory_settings JSONB DEFAULT '{}',
-    pricing_settings JSONB DEFAULT '{}',
-    marketing_settings JSONB DEFAULT '{}',
-    decision_weights JSONB DEFAULT '{}',
-    
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Decision tracking
-CREATE TABLE brand_decisions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    brand_id UUID NOT NULL,
-    decision_type VARCHAR(50), -- pricing, inventory, promotion
-    context JSONB, -- Input data
-    base_recommendation JSONB, -- From Core AI
-    personality_modifiers JSONB, -- Applied changes
-    final_decision JSONB, -- What was implemented
-    confidence_score NUMERIC(3,2),
-    outcome_metrics JSONB, -- Results after implementation
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Cross-brand learning (anonymized)
-CREATE TABLE cross_brand_insights (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    personality_type VARCHAR(50),
-    market_condition VARCHAR(100),
-    strategy VARCHAR(100),
-    outcome NUMERIC, -- Success metric
-    sample_size INTEGER, -- How many brands
-    confidence_level NUMERIC(3,2),
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);`}
-            </pre>
+            <h3 className="text-lg font-semibold mb-4">Database Schema</h3>
+            <p className="text-sm text-gray-300">
+              You need tables to store brand personalities and decision tracking. 
+              The brand_personalities table defines each brand's unique characteristics (market position, risk appetite, etc.). 
+              The brand_decisions table records all decisions made, the reasoning behind them, and their outcomes. 
+              The cross_brand_insights table stores anonymized learnings that benefit all brands.
+            </p>
           </div>
         </section>
 
@@ -351,85 +312,13 @@ CREATE TABLE cross_brand_insights (
 
           <h3 className="text-xl font-semibold text-gray-800 mt-6 mb-3">Code Implementation</h3>
           <div className="bg-gray-900 text-gray-100 rounded-lg p-6 overflow-x-auto">
-            <pre className="text-sm">
-{`class DecisionEngine {
-  async generateRecommendation(brandId, context) {
-    // 1. Get brand personality
-    const personality = await this.getBrandPersonality(brandId);
-    
-    // 2. Get base AI recommendation
-    const baseRec = await this.coreAI.analyze(context);
-    
-    // 3. Apply personality modifiers
-    const modifiedRec = this.applyPersonality(baseRec, personality);
-    
-    // 4. Apply market context
-    const finalRec = await this.applyMarketContext(modifiedRec, brandId);
-    
-    // 5. Store for learning
-    await this.recordDecision(brandId, {
-      context,
-      baseRec,
-      personality,
-      finalRec
-    });
-    
-    return finalRec;
-  }
-  
-  applyPersonality(recommendation, personality) {
-    const modifiers = personality.decisionModifiers;
-    
-    switch(recommendation.type) {
-      case 'inventory':
-        return {
-          ...recommendation,
-          quantity: recommendation.quantity * modifiers.inventory.bufferMultiplier,
-          urgency: this.adjustUrgency(recommendation.urgency, personality.riskAppetite)
-        };
-        
-      case 'pricing':
-        return {
-          ...recommendation,
-          priceChange: recommendation.priceChange * modifiers.pricing.elasticity,
-          promotionDepth: Math.min(
-            recommendation.promotionDepth, 
-            modifiers.pricing.maxDiscount
-          )
-        };
-        
-      case 'marketing':
-        return {
-          ...recommendation,
-          channels: this.filterChannels(recommendation.channels, personality.marketing),
-          messaging: this.adjustMessaging(recommendation.messaging, personality)
-        };
-    }
-  }
-  
-  async learnFromOutcomes() {
-    // Analyze which personality traits work best
-    const insights = await this.db.query(\`
-      SELECT 
-        bp.market_position,
-        bp.risk_appetite,
-        bd.decision_type,
-        AVG(bd.outcome_metrics.success) as avg_success,
-        COUNT(*) as sample_size
-      FROM brand_decisions bd
-      JOIN brand_personalities bp ON bd.brand_id = bp.brand_id
-      WHERE bd.created_at > NOW() - INTERVAL '90 days'
-      GROUP BY bp.market_position, bp.risk_appetite, bd.decision_type
-      HAVING COUNT(*) > 10
-    \`);
-    
-    // Update cross-brand insights
-    for (const insight of insights.rows) {
-      await this.updateCrossBrandInsights(insight);
-    }
-  }
-}`}
-            </pre>
+            <h3 className="text-lg font-semibold mb-3">Decision Engine Implementation</h3>
+            <p className="text-sm text-gray-300">
+              The system works in three steps: First, the core AI analyzes all data and generates a base recommendation. 
+              Then, the brand personality filter modifies this recommendation based on the brand's unique characteristics. 
+              Finally, market context adjusts for local conditions like competition and seasonality. 
+              All decisions are tracked to learn what works best for each personality type.
+            </p>
           </div>
         </section>
 
