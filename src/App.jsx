@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { 
   ChartBarIcon, 
@@ -10,7 +10,8 @@ import {
   UserGroupIcon,
   ShieldCheckIcon,
   RocketLaunchIcon,
-  CurrencyDollarIcon
+  CurrencyDollarIcon,
+  LinkIcon
 } from '@heroicons/react/24/outline'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 
@@ -24,6 +25,7 @@ import BrandDifferentiationContent from './components/BrandDifferentiationConten
 import PerformanceOptimizationContent from './components/PerformanceOptimizationContent.jsx'
 import SecurityComplianceContent from './components/SecurityComplianceContent.jsx'
 import CostROIContent from './components/CostROIContent.jsx'
+import BusinessDependencyContent from './components/BusinessDependencyContent.jsx'
 
 const tabs = [
   { 
@@ -79,6 +81,12 @@ const tabs = [
     href: '/cost-roi', 
     icon: CurrencyDollarIcon,
     description: 'Financial analysis & return on investment'
+  },
+  { 
+    name: 'Business Dependency', 
+    href: '/business-dependency', 
+    icon: LinkIcon,
+    description: 'Creating indispensable value & long-term partnerships'
   }
 ]
 
@@ -89,6 +97,11 @@ function classNames(...classes) {
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [location.pathname])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -142,10 +155,10 @@ export default function App() {
         </nav>
       </header>
 
-      {/* Mobile menu */}
+      {/* Mobile menu - Fixed positioning to stay visible */}
       {mobileMenuOpen && (
-        <div className="sm:hidden bg-white border-b border-gray-200">
-          <div className="px-2 pt-2 pb-3 space-y-1">
+        <div className="sm:hidden fixed inset-x-0 top-16 bg-white border-b border-gray-200 shadow-lg z-40">
+          <div className="px-2 pt-2 pb-3 space-y-1 max-h-96 overflow-y-auto">
             {tabs.map((tab) => {
               const isActive = location.pathname === tab.href
               return (
@@ -185,6 +198,7 @@ export default function App() {
           <Route path="/performance" element={<PerformanceOptimizationContent />} />
           <Route path="/security" element={<SecurityComplianceContent />} />
           <Route path="/cost-roi" element={<CostROIContent />} />
+          <Route path="/business-dependency" element={<BusinessDependencyContent />} />
         </Routes>
       </main>
 
