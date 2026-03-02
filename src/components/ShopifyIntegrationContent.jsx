@@ -148,51 +148,300 @@ export default function ShopifyIntegrationContent() {
           </div>
         </section>
 
-        {/* Handling Messy Data */}
+        {/* Handling Messy Courier Data */}
         <section>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Handling Messy Data</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Handling Messy Courier Data</h2>
           
-          <div className="bg-yellow-50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-yellow-900 mb-4">Common Data Issues & Solutions</h3>
-            
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-semibold text-yellow-800">⚠️ SKU Mismatches</h4>
-                <p className="text-yellow-700 text-sm mt-1">Online SKUs often differ from POS SKUs</p>
-                <div className="bg-yellow-100 rounded p-3 mt-2">
-                  <code className="text-xs">
-                    SKU_MAPPING_TABLE: {'{'} online_sku: "SHIRT-RED-L", pos_sku: "S001" {'}'}
-                  </code>
+          <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-6 mb-6">
+            <h3 className="text-lg font-semibold text-red-900 mb-3">🚨 The Reality of Local Couriers</h3>
+            <p className="text-red-800">
+              Unlike FedEx/DHL with their clean APIs, local couriers like Bosta, Turuq, and Floatex present significant data challenges. 
+              Their systems often lack proper documentation, change without notice, and require extensive manual cleaning.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            {/* Common Issues */}
+            <div className="bg-yellow-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-yellow-900 mb-4">Common Data Issues & Solutions</h3>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-semibold text-yellow-800 mb-3">📛 Inconsistent Tracking Numbers</h4>
+                  <p className="text-yellow-700 text-sm mb-2">Formats change randomly, duplicates, missing digits</p>
+                  <div className="bg-yellow-100 rounded p-3">
+                    <p className="text-xs font-mono text-yellow-900">
+                      <strong>Solution:</strong><br/>
+                      // Normalize tracking numbers<br/>
+                      function normalizeTracking(num) {'{'}<br/>
+                      &nbsp;&nbsp;// Remove spaces, dashes<br/>
+                      &nbsp;&nbsp;num = num.replace(/[\s-]/g, '')<br/>
+                      &nbsp;&nbsp;// Add country code if missing<br/>
+                      &nbsp;&nbsp;if (num.length === 12) num = 'EG' + num<br/>
+                      &nbsp;&nbsp;return num.toUpperCase()<br/>
+                      {'}'}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-yellow-800 mb-3">📍 Messy Address Data</h4>
+                  <p className="text-yellow-700 text-sm mb-2">Mixed languages, no postal codes, informal areas</p>
+                  <div className="bg-yellow-100 rounded p-3">
+                    <p className="text-xs font-mono text-yellow-900">
+                      <strong>Solution:</strong><br/>
+                      // Address standardization<br/>
+                      - Google Geocoding API<br/>
+                      - Area name mapping table<br/>
+                      - Manual review queue<br/>
+                      - ML for pattern recognition
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-yellow-800 mb-3">⏰ Inconsistent Status Updates</h4>
+                  <p className="text-yellow-700 text-sm mb-2">Different languages, custom statuses, delays</p>
+                  <div className="bg-yellow-100 rounded p-3">
+                    <p className="text-xs font-mono text-yellow-900">
+                      <strong>Solution:</strong><br/>
+                      // Status mapping<br/>
+                      STATUS_MAP = {'{'}<br/>
+                      &nbsp;&nbsp;'تم التسليم': 'delivered',<br/>
+                      &nbsp;&nbsp;'قيد التوصيل': 'out_for_delivery',<br/>
+                      &nbsp;&nbsp;'تم الاستلام': 'picked_up'<br/>
+                      {'}'}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-yellow-800 mb-3">📊 Missing/Incorrect Metrics</h4>
+                  <p className="text-yellow-700 text-sm mb-2">Wrong weights, dimensions, delivery fees</p>
+                  <div className="bg-yellow-100 rounded p-3">
+                    <p className="text-xs font-mono text-yellow-900">
+                      <strong>Solution:</strong><br/>
+                      // Data validation rules<br/>
+                      - Weight ranges by product<br/>
+                      - Fee verification<br/>
+                      - Historical comparison<br/>
+                      - Flag for manual review
+                    </p>
+                  </div>
                 </div>
               </div>
+            </div>
 
-              <div>
-                <h4 className="font-semibold text-yellow-800">⚠️ Customer Data Gaps</h4>
-                <p className="text-yellow-700 text-sm mt-1">Missing emails, phone numbers, or addresses</p>
-                <div className="bg-yellow-100 rounded p-3 mt-2">
-                  <code className="text-xs">
-                    Validation: Soft fail → Mark for review → Don't block order
-                  </code>
+            {/* Courier-Specific Strategies */}
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Courier-Specific Strategies</h3>
+              
+              <div className="space-y-4">
+                {/* Bosta */}
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">🚴 Bosta Challenges & Solutions</h4>
+                  <div className="grid md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="font-medium text-red-600 mb-1">Issues:</p>
+                      <ul className="space-y-1 text-gray-700">
+                        <li>• API returns HTML instead of JSON</li>
+                        <li>• Status in Arabic/English mix</li>
+                        <li>• Rate limits not documented</li>
+                        <li>• Sandbox environment unreliable</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="font-medium text-green-600 mb-1">Solutions:</p>
+                      <ul className="space-y-1 text-gray-700">
+                        <li>• HTML parser fallback</li>
+                        <li>• Translation layer</li>
+                        <li>• Exponential backoff</li>
+                        <li>• Mock data for testing</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Turuq */}
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">🏍️ Turuq Challenges & Solutions</h4>
+                  <div className="grid md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="font-medium text-red-600 mb-1">Issues:</p>
+                      <ul className="space-y-1 text-gray-700">
+                        <li>• No webhook support</li>
+                        <li>• CSV-only bulk operations</li>
+                        <li>• Manual driver assignments</li>
+                        <li>• No delivery time estimates</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="font-medium text-green-600 mb-1">Solutions:</p>
+                      <ul className="space-y-1 text-gray-700">
+                        <li>• Scheduled polling every 5 min</li>
+                        <li>• CSV parser & generator</li>
+                        <li>• Assignment automation</li>
+                        <li>• ML-based ETA prediction</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floatex */}
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">🚚 Floatex Challenges & Solutions</h4>
+                  <div className="grid md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="font-medium text-red-600 mb-1">Issues:</p>
+                      <ul className="space-y-1 text-gray-700">
+                        <li>• FTP-only data access</li>
+                        <li>• Fixed-width file format</li>
+                        <li>• Daily batch updates only</li>
+                        <li>• No real-time tracking</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="font-medium text-green-600 mb-1">Solutions:</p>
+                      <ul className="space-y-1 text-gray-700">
+                        <li>• FTP watcher service</li>
+                        <li>• Custom file parser</li>
+                        <li>• Stale data detection</li>
+                        <li>• Status inference logic</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
+            </div>
 
-              <div>
-                <h4 className="font-semibold text-yellow-800">⚠️ Duplicate Orders</h4>
-                <p className="text-yellow-700 text-sm mt-1">Same order from multiple sources</p>
-                <div className="bg-yellow-100 rounded p-3 mt-2">
-                  <code className="text-xs">
-                    Deduplication: customer_email + total_price + timestamp ±5min
-                  </code>
+            {/* Data Cleaning Pipeline */}
+            <div className="bg-blue-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-blue-900 mb-4">🔄 Automated Data Cleaning Pipeline</h3>
+              
+              <div className="space-y-3">
+                <div className="flex items-center space-x-4">
+                  <div className="bg-blue-500 text-white px-3 py-1 rounded text-sm">Raw Data</div>
+                  <span>→</span>
+                  <div className="bg-purple-500 text-white px-3 py-1 rounded text-sm">Validation</div>
+                  <span>→</span>
+                  <div className="bg-green-500 text-white px-3 py-1 rounded text-sm">Normalization</div>
+                  <span>→</span>
+                  <div className="bg-orange-500 text-white px-3 py-1 rounded text-sm">Enrichment</div>
+                  <span>→</span>
+                  <div className="bg-red-500 text-white px-3 py-1 rounded text-sm">Clean Data</div>
+                </div>
+
+                <div className="grid md:grid-cols-5 gap-2 text-xs">
+                  <div className="bg-white rounded p-3">
+                    <p className="font-semibold">Raw Data</p>
+                    <ul className="mt-1 space-y-1 text-gray-600">
+                      <li>• JSON/HTML/CSV</li>
+                      <li>• Mixed encodings</li>
+                      <li>• Missing fields</li>
+                    </ul>
+                  </div>
+                  <div className="bg-white rounded p-3">
+                    <p className="font-semibold">Validation</p>
+                    <ul className="mt-1 space-y-1 text-gray-600">
+                      <li>• Schema check</li>
+                      <li>• Required fields</li>
+                      <li>• Data types</li>
+                    </ul>
+                  </div>
+                  <div className="bg-white rounded p-3">
+                    <p className="font-semibold">Normalization</p>
+                    <ul className="mt-1 space-y-1 text-gray-600">
+                      <li>• Standard formats</li>
+                      <li>• Language unify</li>
+                      <li>• Code mapping</li>
+                    </ul>
+                  </div>
+                  <div className="bg-white rounded p-3">
+                    <p className="font-semibold">Enrichment</p>
+                    <ul className="mt-1 space-y-1 text-gray-600">
+                      <li>• Geocoding</li>
+                      <li>• Time zones</li>
+                      <li>• Cost calculation</li>
+                    </ul>
+                  </div>
+                  <div className="bg-white rounded p-3">
+                    <p className="font-semibold">Clean Data</p>
+                    <ul className="mt-1 space-y-1 text-gray-600">
+                      <li>• Ready for use</li>
+                      <li>• Audit trail</li>
+                      <li>• Quality score</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
+            </div>
 
-              <div>
-                <h4 className="font-semibold text-yellow-800">⚠️ Courier Format Variations</h4>
-                <p className="text-yellow-700 text-sm mt-1">Each courier has different API/track format</p>
-                <div className="bg-yellow-100 rounded p-3 mt-2">
-                  <code className="text-xs">
-                    Adapter Pattern: Standardize → Process → Return original format
-                  </code>
+            {/* Manual Review Queue */}
+            <div className="bg-purple-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-purple-900 mb-4">👥 Manual Review Queue System</h3>
+              
+              <p className="text-purple-800 mb-4">
+                Not everything can be automated. Build a smart queue for human intervention:
+              </p>
+
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="bg-white rounded-lg p-4 border border-purple-200">
+                  <h4 className="font-semibold text-purple-900 mb-2">Auto-Flag Conditions</h4>
+                  <ul className="text-sm text-gray-700 space-y-1">
+                    <li>• Confidence score &lt; 80%</li>
+                    <li>• Address not found</li>
+                    <li>• Duplicate tracking</li>
+                    <li>• Unusual weight/size</li>
+                    <li>• Failed API calls &gt; 3x</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 border border-purple-200">
+                  <h4 className="font-semibold text-purple-900 mb-2">Priority Levels</h4>
+                  <ul className="text-sm text-gray-700 space-y-1">
+                    <li>🔴 Critical: Customer complaints</li>
+                    <li>🟡 High: Delivery delays &gt; 24h</li>
+                    <li>🟢 Medium: Data inconsistencies</li>
+                    <li>⚪ Low: Formatting issues</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 border border-purple-200">
+                  <h4 className="font-semibold text-purple-900 mb-2">Resolution Types</h4>
+                  <ul className="text-sm text-gray-700 space-y-1">
+                    <li>✅ Fixed manually</li>
+                    <li>🔄 Sent to courier</li>
+                    <li>🤖 ML learns from fix</li>
+                    <li>📝 Update rules</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Best Practices */}
+            <div className="bg-green-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-green-900 mb-4">💡 Best Practices for Messy Data</h3>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-semibold text-green-800 mb-2">Technical Approaches</h4>
+                  <ul className="space-y-1 text-sm text-green-700">
+                    <li>• Always version your data parsers</li>
+                    <li>• Keep raw data untouched for 30 days</li>
+                    <li>• Log all transformations with reasons</li>
+                    <li>• Build rollback capabilities</li>
+                    <li>• Monitor data quality scores daily</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-green-800 mb-2">Operational Strategies</h4>
+                  <ul className="space-y-1 text-sm text-green-700">
+                    <li>• Daily data quality reports</li>
+                    <li>• Weekly pattern reviews</li>
+                    <li>• Monthly courier performance</li>
+                    <li>• Quarterly parser updates</li>
+                    <li>• Always have backup manual process</li>
+                  </ul>
                 </div>
               </div>
             </div>
