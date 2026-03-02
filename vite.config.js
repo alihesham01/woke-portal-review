@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   base: '/woke-portal-review/',
   build: {
-    outDir: 'dist',
+    outDir: 'docs',
     assetsDir: 'assets'
   }
 })
