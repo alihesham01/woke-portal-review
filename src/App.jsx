@@ -11,7 +11,8 @@ import {
   ShieldCheckIcon,
   RocketLaunchIcon,
   CurrencyDollarIcon,
-  LinkIcon
+  LinkIcon,
+  LightBulbIcon as TipsIcon
 } from '@heroicons/react/24/outline'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 
@@ -26,6 +27,7 @@ import PerformanceOptimizationContent from './components/PerformanceOptimization
 import SecurityComplianceContent from './components/SecurityComplianceContent.jsx'
 import CostROIContent from './components/CostROIContent.jsx'
 import BusinessDependencyContent from './components/BusinessDependencyContent.jsx'
+import TipsTricksContent from './components/TipsTricksContent.jsx'
 
 const tabs = [
   { 
@@ -87,6 +89,12 @@ const tabs = [
     href: '/business-dependency', 
     icon: LinkIcon,
     description: 'Strategic playbook: becoming indispensable and ensuring long-term value'
+  },
+  { 
+    name: 'Tips & Tricks', 
+    href: '/tips-tricks', 
+    icon: TipsIcon,
+    description: 'Cheat codes: shortcuts, hacks, and career acceleration strategies'
   }
 ]
 
@@ -199,6 +207,7 @@ export default function App() {
           <Route path="/security" element={<SecurityComplianceContent />} />
           <Route path="/cost-roi" element={<CostROIContent />} />
           <Route path="/business-dependency" element={<BusinessDependencyContent />} />
+          <Route path="/tips-tricks" element={<TipsTricksContent />} />
         </Routes>
       </main>
 
