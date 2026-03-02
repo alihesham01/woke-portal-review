@@ -12,7 +12,8 @@ import {
   RocketLaunchIcon,
   CurrencyDollarIcon,
   LinkIcon,
-  LightBulbIcon as TipsIcon
+  LightBulbIcon as TipsIcon,
+  ArrowPathIcon
 } from '@heroicons/react/24/outline'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 
@@ -28,6 +29,7 @@ import SecurityComplianceContent from './components/SecurityComplianceContent.js
 import CostROIContent from './components/CostROIContent.jsx'
 import BusinessDependencyContent from './components/BusinessDependencyContent.jsx'
 import TipsTricksContent from './components/TipsTricksContent.jsx'
+import FreedomRoadmapContent from './components/FreedomRoadmapContent.jsx'
 
 const tabs = [
   { 
@@ -95,6 +97,12 @@ const tabs = [
     href: '/tips-tricks', 
     icon: TipsIcon,
     description: 'Cheat codes: shortcuts, hacks, and career acceleration strategies'
+  },
+  { 
+    name: 'Freedom Roadmap', 
+    href: '/freedom-roadmap', 
+    icon: ArrowPathIcon,
+    description: 'Delegate effectively, build systems, and reclaim your time'
   }
 ]
 
@@ -208,6 +216,7 @@ export default function App() {
           <Route path="/cost-roi" element={<CostROIContent />} />
           <Route path="/business-dependency" element={<BusinessDependencyContent />} />
           <Route path="/tips-tricks" element={<TipsTricksContent />} />
+          <Route path="/freedom-roadmap" element={<FreedomRoadmapContent />} />
         </Routes>
       </main>
 
