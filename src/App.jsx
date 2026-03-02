@@ -8,7 +8,9 @@ import {
   LightBulbIcon,
   SparklesIcon,
   UserGroupIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
+  RocketLaunchIcon,
+  CurrencyDollarIcon
 } from '@heroicons/react/24/outline'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 
@@ -19,6 +21,9 @@ import DecisionIntelligenceContent from './components/DecisionIntelligenceConten
 import MissingAutomationsContent from './components/MissingAutomationsContent.jsx'
 import CodebaseReviewContent from './components/CodebaseReviewContent.jsx'
 import BrandDifferentiationContent from './components/BrandDifferentiationContent.jsx'
+import PerformanceOptimizationContent from './components/PerformanceOptimizationContent.jsx'
+import SecurityComplianceContent from './components/SecurityComplianceContent.jsx'
+import CostROIContent from './components/CostROIContent.jsx'
 
 const tabs = [
   { 
@@ -56,6 +61,24 @@ const tabs = [
     href: '/brand-differentiation', 
     icon: UserGroupIcon,
     description: 'Avoiding clone behavior across 40 brands'
+  },
+  { 
+    name: 'Performance', 
+    href: '/performance', 
+    icon: RocketLaunchIcon,
+    description: 'Critical performance optimizations needed'
+  },
+  { 
+    name: 'Security & Compliance', 
+    href: '/security', 
+    icon: ShieldCheckIcon,
+    description: 'Essential security measures & compliance'
+  },
+  { 
+    name: 'Cost & ROI', 
+    href: '/cost-roi', 
+    icon: CurrencyDollarIcon,
+    description: 'Financial analysis & return on investment'
   }
 ]
 
@@ -159,6 +182,9 @@ export default function App() {
           <Route path="/missing-automations" element={<MissingAutomationsContent />} />
           <Route path="/codebase-review" element={<CodebaseReviewContent />} />
           <Route path="/brand-differentiation" element={<BrandDifferentiationContent />} />
+          <Route path="/performance" element={<PerformanceOptimizationContent />} />
+          <Route path="/security" element={<SecurityComplianceContent />} />
+          <Route path="/cost-roi" element={<CostROIContent />} />
         </Routes>
       </main>
 
